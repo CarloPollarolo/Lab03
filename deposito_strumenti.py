@@ -1,16 +1,18 @@
 import csv
 from operator import attrgetter
 
-class Strumento:
+class Strumento:  #classe per gli strumenti totali
     def __init__(self, id_strumento, tipo, marca, anno_acquisto, valore):
         self.__id_strumento = id_strumento
         self.__tipo = tipo
         self.__marca = marca
         self.__anno_acquisto = int(anno_acquisto)
         self.__valore = float(valore)
+
     @property
     def marca(self):
-        return self.__marca
+        return self.__marca  #servirà avanti per ordinarli per marca
+
     @property
     def id_strumento(self):
         return self.__id_strumento
@@ -18,15 +20,19 @@ class Strumento:
     def __str__(self):
         return f"{self.__id_strumento} - {self.__tipo} {self.__marca} ({self.__anno_acquisto}) - €{self.__valore:.2f}"
 
-class Prestiti:
+
+
+class Prestiti: #classe per gli strumenti in prestito
     def __init__(self,id_prestito,data,id_strumento,cognome_allievo):
         self.__id_prestito=id_prestito
         self.__data=data
         self.__id_strumento=id_strumento
         self.__cognome_allievo=cognome_allievo
+
     @property
     def id_strumento(self):
-        return self.__id_strumento
+        return self.__id_strumento  #servirà renderlo accessibile per i controlli degli id nei prestiti
+
     def __str__(self):
         return f"{self.__id_prestito}, {self.__data}, {self.__id_strumento}, {self.__cognome_allievo}"
 
@@ -40,9 +46,11 @@ class DepositoStrumenti:
         self.__responsabile=responsabile
         self.strumenti={}
         self.prestiti={}
+
     @property
     def responsabile(self):
         return self.__responsabile
+
     @responsabile.setter
     def responsabile(self, responsabile):
         self.__responsabile=responsabile
@@ -74,9 +82,9 @@ class DepositoStrumenti:
 
     def aggiungi_strumento(self, tipo, marca, anno_acquisto, valore):
         """Aggiunge uno strumento nel deposito: aggiunge solo nel sistema e non aggiorna il file"""
-        # TODO
 
-        id_strumento="S"+str(len(self.strumenti)+1)
+        id_strumento="S"+str(len(self.strumenti)+1) #la len di strumenti è la qtà dei suoi elem, aggiungo 1 per
+                                                    # un nuovo elemento
         s_nuovo=Strumento(id_strumento,tipo,marca,anno_acquisto,valore)
         self.strumenti[id_strumento]=s_nuovo
 
@@ -86,16 +94,16 @@ class DepositoStrumenti:
 
     def strumenti_ordinati_per_marca(self):
         """Ordina gli strumenti per marca in ordine alfabetico"""
-        # TODO
         ordinati=sorted(self.strumenti.values(),key=attrgetter("marca"))
         return ordinati
 
+
     def nuovo_prestito(self, data, id_strumento, cognome_allievo):
         """Crea un nuovo prestito"""
-        if id_strumento not in self.strumenti:
+        if id_strumento not in self.strumenti: #richiesta prestito ma lo strumento non è presente tra gli elem. di strumenti
             raise Exception('Strumento non trovato')
 
-        for prestito_attivo in self.prestiti.values():
+        for prestito_attivo in self.prestiti.values(): #controllo se lo strumento sia già in un elemento dei prestiti
             if prestito_attivo.id_strumento==id_strumento:
                 raise Exception('strumento già in prestito')
 
@@ -107,7 +115,7 @@ class DepositoStrumenti:
 
     def termina_prestito(self, id_prestito):
         """Termina un prestito in atto"""
-        if id_prestito in self.prestiti:
+        if id_prestito in self.prestiti:  #dato l'id prestito interessato, viene tolto dai prestiti
             self.prestiti.pop(id_prestito)
         else:
             raise Exception('prestito non trovato')
